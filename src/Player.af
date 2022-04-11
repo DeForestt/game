@@ -1,0 +1,97 @@
+.needs <std>
+
+import Food from "./src/Food";
+import Position from "./src/Position";
+import Random from "math";
+
+class NPC {
+
+    const private Position position = new Position(x, y);
+    const private Position tail = new Position(x, y);
+    private bool alive = true;
+    int health = 100;
+    const private int maxHealth = 100;
+    private adr sprite = "X";
+    private int respawnTime = 0;
+
+    NPC init(int x, int y) {
+        return my;
+    };
+
+    int eat(Food food){
+        my.health = my.health + food.health;
+        if my.health > my.maxHealth
+            my.health = my.maxHealth;
+    };
+
+    adr getSprite(){
+        return my.sprite;
+    };
+
+    int getX() {
+        return my.position.x;
+    };
+
+    int getY() {
+        return my.position.y;
+    };
+
+    int getTailX(){
+        return my.tail.x;
+    };
+
+    int getTailY(){
+        return my.tail.y;
+    };
+
+    bool isAt(Position position){
+        return my.position.x == position.x & my.position.y == position.y;
+    };
+
+    private int reset(){
+        if my.respawnTime <= 5
+            my.respawnTime = my.respawnTime + 1
+        else {
+            Random rand = Random();
+            my.alive = true;
+            my.health = 100;
+            my.position.x = rand.nextInt(10);
+            my.position.y = rand.nextInt(10);
+            my.tail.x = my.position.x;
+            my.tail.y = my.position.y;
+            my.respawnTime = 0;
+        };
+    };
+
+    int smartMove(Food food){
+        if !my.alive {
+            my.reset();
+            return -1;
+        };
+
+        my.tail.x = my.position.x;
+        my.tail.y = my.position.y;
+
+        if my.position.x < food.x {
+            my.position.x = my.position.x + 1;
+            my.sprite = " > ";
+        } else if my.position.x > food.x {
+            my.position.x = my.position.x - 1;
+            my.sprite = " < ";
+        } else if my.position.y < food.y {
+            my.position.y = my.position.y + 1;
+            my.sprite = " v ";
+        } else if my.position.y > food.y {
+            my.position.y = my.position.y - 1;
+            my.sprite = " ^ ";
+        } else
+            return -1;
+        if my.health <= 0 my.alive = false;
+        return 0;
+    };
+
+    int del(){
+        free(my.position);
+        free(my.tail);
+    };
+};

@@ -1,0 +1,11 @@
+class Food {
+    public int x;
+    public int y;
+    public bool eaten = false; 
+    public int health;
+
+    Food init(int x, int y) {
+        my.x = x;
+        my.y = y;
+    };
+};

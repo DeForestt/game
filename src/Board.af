@@ -1,0 +1,123 @@
+.needs <std>
+
+import NPC from "./src/Player.af";
+import Random from "math";
+import Food from "./src/Food.af";
+import Position from "./src/Position.af";
+import * from "io" under io;
+import LinkedList from "Collections";
+
+class Board {
+    const private Food food = new Food(5, 5);
+    const private Random rand = new Random();
+    private int score = 0;
+    private LinkedList npcs = new LinkedList();
+    private bool gameOver = false;
+
+    private int moveFood() {
+        my.food.x = my.rand.nextInt(10);
+        my.food.y = my.rand.nextInt(10);
+        my.food.health = my.rand.nextInt(100);
+        my.food.eaten = false;
+    };
+
+    int getScore() {
+        return my.score;
+    };
+
+    public bool isGameOver() {
+        return my.gameOver;
+    };
+
+    Board init(int count) {
+        for int i = 0; i < count; i++ {
+            NPC n1 = new NPC(my.rand.nextInt(10), my.rand.nextInt(10));
+            my.npcs.append(n1);
+        };
+        my.moveFood()
+    };
+
+    private NPC inspectLocation(int x, int y){
+        if my.npcs.size() < 1 return NULL;
+
+        Position p = Position(x, y);
+
+        LinkedList list = my.npcs.where([NPC n, int index, Position pos] => {
+            return n.getX() == pos.x & n.getY() == pos.y;
+        }, p);
+
+        if list.size() < 1 {
+            return NULL;
+        } else {
+            NPC npc = list.get(0);
+            return npc;
+        };
+    };
+
+    private bool hasTail(int x, int y){
+        if my.npcs.size() < 1 return false;
+
+        Position p = Position(x, y);
+
+        LinkedList list = my.npcs.where([NPC n, int index, Position pos] => {
+            return n.getTailX() == pos.x & n.getTailY() == pos.y;
+        }, p);
+
+        if list.size() < 1 {
+            return false;
+        };
+
+        return true;
+    };
+
+    public int draw() {
+        io.print("Food Health: "); io.printInt(my.food.health);
+        io.print("\n");
+        io.print("----------------------------------\n");
+        for int i = 0; i < 10; i++ {
+            io.print(" | ");
+            for int j = 0; j < 10; j++ {
+                NPC npc = my.inspectLocation(j, i);
+                if npc != NULL {
+                    io.print(npc.getSprite());
+                } else if my.food.x == j & my.food.y == i
+                    io.print(" 0 ")
+                else if my.hasTail(j, i)
+                    io.print(" * ")
+                else
+                    io.print("   ");
+            };
+
+            io.print(" |\n");
+        };
+        io.print("----------------------------------\n");
+    };
+
+    public int movePlayer(){
+
+        my.npcs.forEach([NPC npc, int index, Food food] => {
+            npc.smartMove(food);
+            Random rand = Random();
+            npc.health = npc.health - rand.nextInt(10);
+            if (npc.getX() == food.x) & (npc.getY() == food.y) {
+                npc.eat(food);
+                food.eaten = true;
+            };
+            return 0;
+        }, my.food);
+
+        if my.food.eaten my.moveFood();
+
+        my.score = my.score + 1;
+
+        return 0;
+    };
+
+    public int del() {
+        Food food = my.food;
+        Random rand = my.rand;
+        delete food;
+        delete rand;
+        return 0;
+    };
+};

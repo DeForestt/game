@@ -1,0 +1,19 @@
+.needs <std>
+
+import * from "io" under io;
+import Board from "./src/Board";
+import String from "String";
+import * from "String" under str;
+
+int main() {
+
+	const Board b = Board(2);
+	while !b.isGameOver() {
+		io.clear();
+		b.draw();
+		b.movePlayer();
+		sleep(0, 100000000);
+	};
+
+	return 0;
+};
