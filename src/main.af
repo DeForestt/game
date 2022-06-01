@@ -2,12 +2,10 @@
 
 import * from "io" under io;
 import Board from "./src/Board";
-import String from "String";
-import * from "String" under str;
 
 int main() {
 
-	const Board b = Board(2);
+	const Board b = Board(5);
 	while !b.isGameOver() {
 		io.clear();
 		b.draw();
